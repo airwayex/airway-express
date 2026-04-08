@@ -881,13 +881,18 @@ function validateStep(n) {
 
     const tel = fv('send_telno');
     const telDigits = tel.replace(/\D/g,'');
-    chk('send_telno', 'send_telno_err', !tel || telDigits.length < 10,
-      !tel ? '전화번호를 입력해주세요' : '올바른 미국 전화번호를 입력해주세요 (예: 510-600-3423, 10자리)');
+    const telFail = !tel || telDigits.length !== 10 || telDigits[0] === '0' || telDigits[0] === '1';
+    chk('send_telno', 'send_telno_err', telFail,
+      !tel ? '전화번호를 입력해주세요' :
+      telDigits.length !== 10 ? '10자리 미국 전화번호를 입력해주세요 (예: 510-600-3423)' :
+      '올바른 미국 전화번호를 입력해주세요 (예: 510-600-3423)');
 
     const addr = fv('send_address');
-    chk('send_address', 'send_address_err',
-      !addr || addr.length < 5,
-      !addr ? '미국 주소를 입력해주세요' : '주소를 더 자세히 입력해주세요');
+    const addrFail = !addr || addr.length < 10 || !/[0-9]/.test(addr) || !/[a-zA-Z]{2,}/.test(addr);
+    chk('send_address', 'send_address_err', addrFail,
+      !addr ? '미국 주소를 입력해주세요' :
+      addr.length < 10 ? '주소를 더 자세히 입력해주세요' :
+      '번지수와 도로명을 포함해 입력해주세요 (예: 35 Ingold Rd, Burlingame CA 94010)');
   }
 
   if (n === 2) {
