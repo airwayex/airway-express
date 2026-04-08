@@ -803,7 +803,8 @@ window._nameJsLoaded = true;
   <input type="hidden" name="relayway" value="A">
 </form>
 
-<script>
+<script type="text/javascript">
+
 
 /* ═══════════════════════════
    표준품명 실제 DB (hyundaisf.com에서 직접 추출)
@@ -2388,6 +2389,18 @@ window.addEventListener('load', () => {
 // 페이지 로드시 초기 상품 행 1개 생성
 addItemRow();
 
+
+</script>
+<script>
+// 진단 코드
+window.addEventListener('DOMContentLoaded', function() {
+  var status = document.createElement('div');
+  status.id = 'diag';
+  status.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:' + (typeof goStep==="function"?"#1a7f4b":"#c0392b") + ';color:#fff;padding:8px;font-size:12px;text-align:center;z-index:9999';
+  status.textContent = typeof goStep==="function" ? "✓ JS 로드 성공" : "✗ JS 로드 실패 - goStep:" + typeof goStep;
+  document.body.appendChild(status);
+  setTimeout(function(){ var d=document.getElementById('diag'); if(d) d.remove(); }, 5000);
+});
 </script>
 </body>
 </html>
