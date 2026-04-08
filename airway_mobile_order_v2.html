@@ -1058,27 +1058,32 @@ function autoFillEngName(korVal) {
 ═══════════════════════════ */
 // 브랜드용 - 한글만 차단, 대소문자 유지
 function engOnlyNoUpper(el, errId) {
-  const orig = el.value;
-  const pos = el.selectionStart;
-  const beforeCursor = orig.slice(0, pos);
-  const cleanBefore  = beforeCursor.replace(/[^ -]/g, '');
-  const cleanFull    = orig.replace(/[^ -]/g, '');
-  if (orig !== cleanFull) {
-    el.value = cleanFull;
-    const newPos = cleanBefore.length;
-    try { el.setSelectionRange(newPos, newPos); } catch(e) {}
+  var orig = el.value;
+  var pos = el.selectionStart;
+  var clean = '';
+  for (var i = 0; i < orig.length; i++) {
+    var code = orig.charCodeAt(i);
+    if (code >= 32 && code <= 126) clean += orig[i];
+  }
+  if (orig !== clean) {
+    var beforeClean = '';
+    for (var j = 0; j < Math.min(pos, orig.length); j++) {
+      var c = orig.charCodeAt(j);
+      if (c >= 32 && c <= 126) beforeClean += orig[j];
+    }
+    el.value = clean;
+    try { el.setSelectionRange(beforeClean.length, beforeClean.length); } catch(e) {}
     if (errId) {
-      const errEl = document.getElementById(errId);
+      var errEl = document.getElementById(errId);
       if (errEl) {
         errEl.innerHTML = '⚠ 영문으로 입력해주세요';
         errEl.style.display = 'block';
         clearTimeout(errEl._t);
-        errEl._t = setTimeout(() => { errEl.style.display = 'none'; }, 2000);
+        errEl._t = setTimeout(function() { errEl.style.display = 'none'; }, 2000);
       }
     }
   }
 }
-
 function engOnly(el, errId) {
   const orig = el.value;
   const pos = el.selectionStart;   // 교체 전 커서 위치
