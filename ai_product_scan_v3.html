@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 상품 자동 인식</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=DM+Sans:wght@400;500;600&display=swap');
+:root {
+  --blue:#1251aa; --blue-l:#e8f0fd;
+  --green:#1a7f4b; --green-l:#e6f6ed;
+  --red:#c0392b; --amber:#d47c0a; --amber-l:#fef8e7;
+  --purple:#6d28d9; --purple-l:#ede9fe;
+  --g0:#f7f8fa; --g1:#eef0f4; --g2:#d8dce6; --g3:#9ba3b8; --g4:#5c6478; --g5:#2d3142;
+  --r:12px; --rs:8px;
+  --kr:'Noto Sans KR',sans-serif; --en:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--kr);background:var(--g0);color:var(--g5);min-height:100vh;padding-bottom:30px}
+
+/* 헤더 */
+.hdr{background:var(--blue);padding:12px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.hdr-logo{font-family:var(--en);font-size:14px;font-weight:600;color:#fff}
+.hdr-logo span{font-size:10px;opacity:.7;font-weight:400;display:block;margin-top:1px}
+.hdr-badge{margin-left:auto;background:rgba(255,255,255,.2);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px}
+
+.wrap{max-width:460px;margin:0 auto;padding:14px 12px}
+
+/* 모드 탭 */
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;padding:9px;border:1.5px solid var(--g2);border-radius:var(--rs);background:#fff;font-size:12px;font-weight:700;color:var(--g4);cursor:pointer;text-align:center;font-family:var(--kr);transition:all .15s}
+.tab.on{border-color:var(--purple);background:var(--purple-l);color:var(--purple)}
+
+/* 안내 */
+.guide{padding:9px 12px;border-radius:var(--rs);font-size:11px;line-height:1.6;margin-bottom:12px;display:flex;gap:7px;background:var(--purple-l);border:1px solid #c4b5fd;color:var(--purple)}
+
+/* 업로드 박스 */
+.upload{border:2px dashed var(--g2);border-radius:var(--r);background:#fff;overflow:hidden;transition:all .2s;margin-bottom:12px}
+.upload.drag{border-color:var(--purple);background:var(--purple-l)}
+.up-inner{padding:24px 16px;text-align:center;cursor:pointer}
+.up-icon{font-size:36px;display:block;margin-bottom:10px}
+.up-title{font-size:14px;font-weight:700;color:var(--g5);margin-bottom:5px}
+.up-sub{font-size:11px;color:var(--g3)}
+.up-tags{display:flex;justify-content:center;gap:5px;margin-top:10px;flex-wrap:wrap}
+.utag{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700}
+.uta{background:#dbeafe;color:#1e40af} .utb{background:#d1fae5;color:#065f46}
+
+/* 미리보기 */
+.prev-wrap{display:none}
+.prev-img{width:100%;max-height:240px;object-fit:cover;display:block;border-radius:var(--r) var(--r) 0 0}
+.prev-btns{display:flex;gap:8px;padding:10px 12px;background:#fff;border-top:1px solid var(--g1)}
+.btn-re{flex:1;padding:9px;border:1.5px solid var(--g2);border-radius:var(--rs);background:#fff;font-size:12px;color:var(--g4);cursor:pointer;font-family:var(--kr);font-weight:700}
+.btn-go{flex:2;padding:9px;background:var(--purple);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--kr);display:flex;align-items:center;justify-content:center;gap:5px;transition:opacity .15s}
+.btn-go:disabled{background:var(--g3);cursor:not-allowed}
+#file-in{display:none}
+
+/* 분석 중 */
+.loading{display:none;background:#fff;border-radius:var(--r);padding:26px 18px;text-align:center;margin-bottom:12px;border:1px solid var(--g2)}
+.spin{width:40px;height:40px;border:3px solid var(--purple-l);border-top-color:var(--purple);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 14px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ld-title{font-size:14px;font-weight:700;margin-bottom:5px}
+.ld-step{font-size:11px;color:var(--g3);min-height:18px}
+
+/* 결과 */
+.result{display:none}
+.res-hdr{background:var(--purple);color:#fff;padding:12px 16px;border-radius:var(--r) var(--r) 0 0;display:flex;align-items:center;gap:8px}
+.res-cnt{margin-left:auto;background:rgba(255,255,255,.25);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.res-body{background:#fff;border-radius:0 0 var(--r) var(--r);padding:12px;border:1px solid var(--g2);border-top:none;margin-bottom:12px}
+
+/* 상품 카드 */
+.pc{border:1.5px solid var(--g2);border-radius:var(--rs);padding:12px;margin-bottom:9px;transition:all .15s}
+.pc.on{border-color:var(--green);background:var(--green-l)}
+.pc.off{opacity:.4;background:var(--g0)}
+.pc-hd{display:flex;align-items:flex-start;gap:9px;margin-bottom:10px}
+.pc-num{width:20px;height:20px;border-radius:50%;background:var(--purple-l);color:var(--purple);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--en)}
+.pc.on .pc-num{background:var(--green);color:#fff}
+.pc-name{font-size:13px;font-weight:700;flex:1;line-height:1.4}
+.tog{width:32px;height:19px;border-radius:10px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s;margin-top:2px}
+.tog.on{background:var(--green)} .tog.off{background:var(--g2)}
+.tog::after{content:'';position:absolute;width:15px;height:15px;border-radius:50%;background:#fff;top:2px;transition:left .2s}
+.tog.on::after{left:15px} .tog.off::after{left:2px}
+
+.flds{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.fld{display:flex;flex-direction:column;gap:2px}
+.fld label{font-size:9px;font-weight:700;color:var(--g3);text-transform:uppercase;letter-spacing:.3px}
+.fld input{padding:6px 9px;border:1.5px solid var(--g2);border-radius:6px;font-size:12px;font-family:var(--kr);background:#fff;color:var(--g5);outline:none;width:100%;transition:border-color .2s}
+.fld input:focus{border-color:var(--blue)}
+.fld input.en{font-family:var(--en)}
+.fld input[readonly]{background:var(--green-l);color:var(--green);font-size:11px}
+.full{grid-column:1/-1}
+
+.cb{height:3px;border-radius:2px;background:var(--g1);overflow:hidden;margin-top:7px}
+.cf{height:100%;border-radius:2px}
+.ch{background:var(--green)} .cm{background:var(--amber)} .cl{background:var(--red)}
+.ct{font-size:9px;color:var(--g3);margin-top:2px}
+
+.warn{padding:9px 12px;background:var(--amber-l);border:1px solid #fcd34d;border-radius:var(--rs);font-size:11px;color:var(--amber);line-height:1.5;margin-bottom:9px;display:none;gap:7px}
+.warn.show{display:flex}
+
+.apply-info{background:var(--g0);border-radius:var(--rs);padding:9px 12px;margin-bottom:9px;font-size:11px;color:var(--g4);line-height:1.5}
+.btn-apply{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:var(--kr);display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .15s}
+.btn-apply:hover{opacity:.88}
+.btn-apply:disabled{background:var(--g3);cursor:not-allowed}
+
+.empty{text-align:center;padding:22px;color:var(--g3)}
+.empty-ic{font-size:30px;margin-bottom:7px}
+
+/* 토스트 */
+.toast{position:fixed;bottom:60px;left:50%;transform:translateX(-50%) translateY(14px);color:#fff;padding:10px 18px;border-radius:var(--r);font-size:12px;font-weight:700;opacity:0;transition:all .25s cubic-bezier(.34,1.56,.64,1);z-index:9999;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.btn-back{width:100%;padding:11px;background:var(--blue-l);color:var(--blue);border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:var(--kr)}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="hdr">
+  <div class="hdr-logo">AIRWAY EXPRESS <span>AI 상품 자동 인식</span></div>
+  <span class="hdr-badge">✦ Claude AI</span>
+</div>
+
+<div class="wrap">
+
+  <div class="tabs">
+    <button class="tab on" onclick="setMode('online')" id="t-online">🛒 온라인 구매 캡쳐</button>
+    <button class="tab" onclick="setMode('offline')" id="t-offline">🧾 영수증 / 제품 사진</button>
+  </div>
+
+  <div class="guide">
+    <span style="font-size:13px;flex-shrink:0">✦</span>
+    <span id="guide-txt">아마존·쿠팡 주문 화면 캡쳐 또는 상품 상세 페이지를 올려주세요. 상품명·브랜드·가격이 자동 입력됩니다.</span>
+  </div>
+
+  <div class="upload" id="upload-box">
+    <div class="up-inner" id="up-inner" onclick="document.getElementById('file-in').click()">
+      <span class="up-icon">📷</span>
+      <div class="up-title">사진을 탭하여 선택 또는 드래그</div>
+      <div class="up-sub">JPG · PNG · HEIC · WebP · 최대 10MB</div>
+      <div class="up-tags">
+        <span class="utag uta">🛒 주문확인</span>
+        <span class="utag uta">🏷 상품상세</span>
+        <span class="utag utb">🧾 영수증</span>
+        <span class="utag utb">📦 제품박스</span>
+        <span class="utag utb">📄 가격표</span>
+      </div>
+    </div>
+    <div class="prev-wrap" id="prev-wrap">
+      <img id="prev-img" class="prev-img" src="" alt="">
+      <div class="prev-btns">
+        <button class="btn-re" onclick="resetImg(event)">↩ 다시 선택</button>
+        <button class="btn-go" id="btn-go" onclick="doAnalyze(event)">✦ AI 상품 인식 시작</button>
+      </div>
+    </div>
+  </div>
+  <input type="file" id="file-in" accept="image/*" onchange="onFile(this)">
+
+  <div class="loading" id="loading">
+    <div class="spin"></div>
+    <div class="ld-title">AI가 이미지를 분석하고 있어요</div>
+    <div class="ld-step" id="ld-step">이미지를 읽는 중...</div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="res-hdr">
+      <span style="font-size:15px">✦</span>
+      <span style="font-size:13px;font-weight:700">AI 인식 결과</span>
+      <span class="res-cnt" id="res-cnt">0개</span>
+    </div>
+    <div class="res-body">
+      <div class="warn" id="warn"><span>⚠</span><span id="warn-txt"></span></div>
+      <div id="prod-list"></div>
+      <div class="apply-info" id="apply-info"></div>
+      <button class="btn-apply" id="btn-apply" onclick="applyAll()" disabled>
+        ✓ 선택 상품을 배송신청서에 적용
+      </button>
+    </div>
+  </div>
+
+  <button class="btn-back" onclick="goBack()">← 배송신청서로 돌아가기</button>
+
+</div>
+
+<script>
+'use strict';
+let mode = 'online';
+let imgB64 = null, imgMime = 'image/jpeg';
+let prods = [];
+
+/* ── 모드 */
+function setMode(m) {
+  mode = m;
+  document.getElementById('t-online').classList.toggle('on', m==='online');
+  document.getElementById('t-offline').classList.toggle('on', m==='offline');
+  document.getElementById('guide-txt').textContent = m === 'online'
+    ? '아마존·쿠팡 주문 화면 캡쳐 또는 상품 상세 페이지를 올려주세요. 상품명·브랜드·가격이 자동 입력됩니다.'
+    : '마트·약국 영수증, 제품 박스·가격표 사진을 올려주세요. 여러 상품도 한 번에 인식합니다.';
+}
+
+/* ── 파일 선택 */
+function onFile(inp) {
+  const f = inp.files[0]; if (!f) return;
+  if (f.size > 10*1024*1024) { toast('10MB 이하 이미지를 사용해주세요', true); return; }
+  imgMime = f.type || 'image/jpeg';
+  const rd = new FileReader();
+  rd.onload = e => {
+    imgB64 = e.target.result.split(',')[1];
+    document.getElementById('prev-img').src = e.target.result;
+    show('up-inner', false); show('prev-wrap', true);
+    show('loading', false); show('result', false);
+  };
+  rd.readAsDataURL(f);
+}
+
+function resetImg(e) {
+  e.stopPropagation();
+  imgB64 = null;
+  document.getElementById('file-in').value = '';
+  show('up-inner', true); show('prev-wrap', false);
+  show('loading', false); show('result', false);
+}
+
+/* 드래그앤드롭 */
+const ub = document.getElementById('upload-box');
+ub.addEventListener('dragover', e=>{ e.preventDefault(); ub.classList.add('drag'); });
+ub.addEventListener('dragleave', ()=>ub.classList.remove('drag'));
+ub.addEventListener('drop', e=>{
+  e.preventDefault(); ub.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) {
+    const inp = document.getElementById('file-in');
+    try { const dt=new DataTransfer(); dt.items.add(f); inp.files=dt.files; } catch(ex){}
+    onFile(inp);
+  }
+});
+
+/* ── AI 분석 */
+async function doAnalyze(e) {
+  e.stopPropagation();
+  if (!imgB64) return;
+  const btn = document.getElementById('btn-go');
+  btn.disabled = true; btn.textContent = '분석 중...';
+
+  show('prev-wrap', false); show('up-inner', false);
+  show('loading', true); show('result', false);
+
+  const steps = ['이미지를 읽는 중...','상품 정보 찾는 중...','가격·수량 분석 중...','표준품명 매핑 중...','결과 정리 중...'];
+  let si = 0;
+  const stepEl = document.getElementById('ld-step');
+  const iv = setInterval(()=>{ if(si<steps.length) stepEl.textContent=steps[si++]; }, 900);
+
+  const modeHint = mode==='online'
+    ? '온라인 쇼핑몰 주문 확인 화면 또는 상품 상세 페이지 캡쳐입니다.'
+    : '오프라인 영수증, 제품 박스, 또는 가격표 사진입니다.';
+
+  const prompt = `이것은 ${modeHint}
+
+이미지에서 미국→한국 국제배송을 위한 상품 정보를 추출하세요.
+순수 JSON만 반환하세요 (마크다운 코드블록 없이):
+
+{"success":true,"products":[{"prodname":"영문상품명(필수,영문없으면한국어로마자변환)","prodname_kr":"한국어상품명","brand":"브랜드명","prodsize":"사이즈또는색상(없으면빈문자열)","qty":수량(숫자기본1),"cost":USD단가(숫자,원화면1350나누기,없으면0),"cost_original":"원래가격표시예$29.99또는39000원","currency":"USD또는KRW","category_hint":"화장품|의류|신발|전자제품|식품|건강식품|가방|장난감|도서|생활용품|기타","confidence_item":"high|medium|low"}],"warning":"주의사항(없으면빈문자열)"}
+
+규칙: prodname 반드시 영문. 상품없으면 {"success":false,"products":[],"warning":""}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        messages: [{
+          role: 'user',
+          content: [
+            { type:'image', source:{ type:'base64', media_type:imgMime, data:imgB64 } },
+            { type:'text', text:prompt }
+          ]
+        }]
+      })
+    });
+
+    clearInterval(iv);
+
+    if (!resp.ok) {
+      const eb = await resp.json().catch(()=>({}));
+      const st = resp.status;
+      if (st===401||st===403) throw new Error('AUTH_ERROR');
+      throw new Error(eb?.error?.message || `HTTP ${st}`);
+    }
+
+    const data = await resp.json();
+    const raw = data.content?.map(c=>c.text||'').join('').trim();
+
+    let res;
+    try {
+      const m = raw.match(/\{[\s\S]*\}/);
+      res = JSON.parse(m ? m[0] : raw);
+    } catch { throw new Error('PARSE_ERROR'); }
+
+    show('loading', false);
+    renderResult(res);
+
+  } catch(err) {
+    clearInterval(iv);
+    show('loading', false);
+    show('prev-wrap', true);
+    show('up-inner', false);
+    btn.disabled = false;
+    btn.innerHTML = '✦ AI 상품 인식 시작';
+
+    const msg = err.message;
+    if (msg==='AUTH_ERROR') {
+      toast('API 인증 오류 — Claude.ai에서 열어주세요', true);
+    } else if (msg==='PARSE_ERROR') {
+      toast('응답 파싱 오류 — 다시 시도해주세요', true);
+    } else if (msg.includes('Failed to fetch')||msg.includes('NetworkError')||msg.includes('network')) {
+      toast('네트워크 오류 — 인터넷 연결을 확인해주세요', true);
+    } else {
+      toast('오류: ' + msg.slice(0,50), true);
+    }
+    console.error('[AI Scan]', err);
+  }
+}
+
+/* ── 결과 렌더 */
+const CAT = {
+  '화장품':   {c1:'1|화장품/미용용품',     c1l:'화장품/미용용품',   c2:'Skincarecosmetics',        c2l:'스킨케어화장품'},
+  '의류':     {c1:'1|의류/잠옷/언더웨어',  c1l:'의류/언더웨어',     c2:'T-shirts',                 c2l:'티셔츠'},
+  '신발':     {c1:'1|가방/지갑/패션잡화',  c1l:'가방/패션잡화',     c2:'Textitlematerialsfootwear',c2l:'신발'},
+  '전자제품': {c1:'1|휴대폰/액세서리',     c1l:'휴대폰/액세서리',   c2:'Phoneaccessories',         c2l:'휴대폰 액세서리'},
+  '식품':     {c1:'0|차/음료/과자/가공식품',c1l:'식품/음료',         c2:'Snacks',                   c2l:'과자/스낵'},
+  '건강식품': {c1:'0|건강식품/다이어트',   c1l:'건강식품',          c2:'Vitamins',                 c2l:'비타민/영양제'},
+  '가방':     {c1:'1|가방/지갑/패션잡화',  c1l:'가방/패션잡화',     c2:'Bagsandcases',             c2l:'가방핸드백'},
+  '장난감':   {c1:'1|장난감/교육완구/인형',c1l:'장난감/완구',       c2:'Toys',                     c2l:'장난감'},
+  '도서':     {c1:'1|교육/문구/사무용품',  c1l:'교육/문구',         c2:'Books',                    c2l:'도서/서적'},
+  '생활용품': {c1:'1|생활/수납/식기/주방기구',c1l:'생활/주방',      c2:'Kitchenware',              c2l:'주방용품'},
+  '기타':     {c1:'1|가방/지갑/패션잡화',  c1l:'가방/패션잡화',     c2:'Bagsandcases',             c2l:'가방핸드백'},
+};
+
+function renderResult(res) {
+  show('result', true);
+  const wb = document.getElementById('warn');
+  if (res.warning) { wb.classList.add('show'); document.getElementById('warn-txt').textContent=res.warning; }
+  else wb.classList.remove('show');
+
+  if (!res.success || !res.products?.length) {
+    document.getElementById('res-cnt').textContent = '인식 실패';
+    document.getElementById('prod-list').innerHTML = `<div class="empty"><div class="empty-ic">🔍</div><div style="font-size:12px">상품을 찾지 못했습니다.<br>다른 이미지를 시도해주세요.</div></div>`;
+    document.getElementById('btn-apply').disabled = true;
+    return;
+  }
+
+  prods = res.products.map((p,i)=>({ ...p, id:i+1, sel:true, cat:CAT[p.category_hint]||CAT['기타'] }));
+  document.getElementById('res-cnt').textContent = prods.length+'개 상품';
+  drawCards();
+  updSummary();
+}
+
+function drawCards() {
+  document.getElementById('prod-list').innerHTML = prods.map(p=>{
+    const cp = p.confidence_item==='high'?90:p.confidence_item==='medium'?60:30;
+    const cc = p.confidence_item==='high'?'ch':p.confidence_item==='medium'?'cm':'cl';
+    const ct = p.confidence_item==='high'?'인식 정확도 높음':p.confidence_item==='medium'?'인식 보통 — 확인 후 수정하세요':'인식 낮음 — 직접 수정 필요';
+    const cv = p.cost>0 ? parseFloat(p.cost).toFixed(2) : '';
+    const oh = (p.cost_original&&p.currency!=='USD') ? p.cost_original : '';
+    return `
+<div class="pc ${p.sel?'on':'off'}" id="pc${p.id}">
+  <div class="pc-hd">
+    <span class="pc-num">${p.id}</span>
+    <span class="pc-name">${x(p.prodname_kr||p.prodname)}</span>
+    <button class="tog ${p.sel?'on':'off'}" onclick="togProd(${p.id})"></button>
+  </div>
+  <div class="flds">
+    <div class="fld full"><label>상품명(영문·통관용) *</label>
+      <input class="en" id="fn${p.id}" value="${x(p.prodname)}" oninput="upd(${p.id},'prodname',this.value)"></div>
+    <div class="fld"><label>브랜드 *</label>
+      <input id="fb${p.id}" value="${x(p.brand||'')}" oninput="upd(${p.id},'brand',this.value)"></div>
+    <div class="fld"><label>사이즈/색상</label>
+      <input id="fs${p.id}" value="${x(p.prodsize||'')}" oninput="upd(${p.id},'prodsize',this.value)"></div>
+    <div class="fld"><label>단가(USD) *</label>
+      <input class="en" id="fc${p.id}" type="number" step="0.01" min="0"
+        value="${cv}" placeholder="${oh||'직접 입력'}" oninput="upd(${p.id},'cost',this.value)"></div>
+    <div class="fld"><label>수량</label>
+      <input class="en" id="fq${p.id}" type="number" min="1" value="${p.qty||1}" oninput="upd(${p.id},'qty',this.value)"></div>
+    <div class="fld full"><label>표준품명(자동매핑)</label>
+      <input readonly value="${p.cat.c1l} › ${p.cat.c2l}"></div>
+  </div>
+  <div class="cb"><div class="cf ${cc}" style="width:${cp}%"></div></div>
+  <div class="ct">${ct}</div>
+</div>`;
+  }).join('');
+}
+
+function togProd(id) {
+  const p = prods.find(q=>q.id===id); if(!p) return;
+  p.sel = !p.sel;
+  const c = document.getElementById('pc'+id);
+  c.className = 'pc '+(p.sel?'on':'off');
+  c.querySelector('.tog').className = 'tog '+(p.sel?'on':'off');
+  updSummary();
+}
+
+function upd(id, f, v) {
+  const p = prods.find(q=>q.id===id); if(p) p[f]=v;
+}
+
+function updSummary() {
+  const sel = prods.filter(p=>p.sel);
+  const tot = sel.reduce((s,p)=>{
+    const c=parseFloat(document.getElementById('fc'+p.id)?.value||p.cost||0);
+    const q=parseInt(document.getElementById('fq'+p.id)?.value||p.qty||1);
+    return s+c*q;
+  },0);
+  document.getElementById('apply-info').innerHTML = sel.length
+    ? `<strong>${sel.length}개 상품</strong>이 배송신청서에 추가됩니다.${tot>0?` · 합계 <strong>$${tot.toFixed(2)}</strong>`:''}`
+    : '포함할 상품을 선택해주세요.';
+  document.getElementById('btn-apply').disabled = !sel.length;
+}
+
+function x(s){ return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ── 적용 */
+function applyAll() {
+  const sel = prods.filter(p=>p.sel); if(!sel.length) return;
+  const out = sel.map(p=>({
+    prodname: document.getElementById('fn'+p.id)?.value || p.prodname,
+    brand:    document.getElementById('fb'+p.id)?.value || p.brand || 'Unknown',
+    prodsize: document.getElementById('fs'+p.id)?.value || '',
+    cost:     document.getElementById('fc'+p.id)?.value || '0',
+    qty:      document.getElementById('fq'+p.id)?.value || '1',
+    costsum:  ((parseFloat(document.getElementById('fc'+p.id)?.value||0))*(parseInt(document.getElementById('fq'+p.id)?.value||1))).toFixed(2),
+    cat1:p.cat.c1, cat1Label:p.cat.c1l, cat2:p.cat.c2, cat2Label:p.cat.c2l,
+    listpass:p.cat.c1.startsWith('1')?'1':'0',
+  }));
+  try {
+    if (window.opener?.receiveScannedProducts) {
+      window.opener.receiveScannedProducts(out);
+      toast(`✓ ${out.length}개 상품 적용됨`);
+      setTimeout(()=>window.close(), 1200);
+    } else {
+      localStorage.setItem('scanned_products', JSON.stringify(out));
+      toast(`✓ ${out.length}개 저장됨 — 배송신청서로 이동합니다`);
+      setTimeout(()=>{ window.location.href='airway_mobile_order_v2.html'; }, 1400);
+    }
+  } catch(e) {
+    localStorage.setItem('scanned_products', JSON.stringify(out));
+    toast(`✓ ${out.length}개 상품이 저장됐습니다`);
+  }
+}
+
+function goBack() {
+  if (window.opener) window.close();
+  else window.location.href = 'airway_mobile_order_v2.html';
+}
+
+function show(id, v) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (id==='prev-wrap'||id==='up-inner') el.style.display = v?'block':'none';
+  else el.style.display = v?'block':'none';
+}
+
+let tt=null;
+function toast(msg, isErr=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=isErr?'var(--red)':'var(--green)';
+  t.classList.add('show');
+  if(tt) clearTimeout(tt);
+  tt=setTimeout(()=>t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
