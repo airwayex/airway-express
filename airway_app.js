@@ -881,8 +881,8 @@ function validateStep(n) {
 
     const tel = fv('send_telno');
     const telDigits = tel.replace(/\D/g,'');
-    chk('send_telno', 'send_telno_err', !tel || telDigits.length < 7,
-      !tel ? '전화번호를 입력해주세요' : '올바른 전화번호를 입력해주세요 (예: 510-600-3423)');
+    chk('send_telno', 'send_telno_err', !tel || telDigits.length < 10,
+      !tel ? '전화번호를 입력해주세요' : '올바른 미국 전화번호를 입력해주세요 (예: 510-600-3423, 10자리)');
 
     const addr = fv('send_address');
     chk('send_address', 'send_address_err',
