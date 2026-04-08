@@ -206,7 +206,7 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
 .btn-ai-scan:hover{opacity:.9}
 .scan-divider{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:11px;color:var(--gray3);font-weight:700}
 .scan-divider::before,.scan-divider::after{content:'';flex:1;height:1px;background:var(--gray2)}
-.scan-loaded-bar{background:#ede9fe;border:1.5px solid #c4b5fd;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;display:none;font-size:12px;color:#6d28d9;align-items:center;justify-content:space-between;gap:8px}
+.scan-loaded-bar{background:#ede9fe;border:1.5px solid #c4b5fd;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px;display:none;font-size:12px;color:#6d28d9;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .scan-loaded-bar.show{display:flex}
 .btn-scan-clear{font-size:11px;color:var(--gray3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:var(--font-kr);padding:0}
 .btn-add-item:hover{background:#d0e4fb;border-color:var(--blue)}
@@ -449,17 +449,17 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap" id="template-btns">
 
-          <button class="template-btn" onclick="applyTemplate('easebox',this)">👗 이지박스 (중고의류)</button>
-          <button class="template-btn" onclick="applyTemplate('easebox_kids',this)">👶 이지박스 (아동)</button>
-          <button class="template-btn" onclick="applyTemplate('easebox_shoes',this)">👟 이지박스 (신발/잡화)</button>
-          <button class="template-btn" onclick="applyTemplate('easebox_books',this)">📚 이지박스 (책/교재)</button>
-          <button class="template-btn" onclick="applyTemplate('new_clothes',this)">🛍 새상품 (의류/잡화)</button>
-          <button class="template-btn" onclick="applyTemplate('cosmetics',this)">💄 화장품/스킨케어</button>
-          <button class="template-btn" onclick="applyTemplate('vitamins',this)">💊 건강식품/비타민</button>
-          <button class="template-btn" onclick="applyTemplate('electronics',this)">📱 전자제품</button>
-          <button class="template-btn" onclick="applyTemplate('snacks',this)">🍫 식품/스낵</button>
-          <button class="template-btn" onclick="applyTemplate('baby',this)">🍼 유아용품</button>
-          <button class="template-btn" onclick="applyTemplate('golf',this)">⛳ 골프용품</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;easebox&#39;,this)">👗 이지박스 (중고의류)</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;easebox_kids&#39;,this)">👶 이지박스 (아동)</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;easebox_shoes&#39;,this)">👟 이지박스 (신발/잡화)</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;easebox_books&#39;,this)">📚 이지박스 (책/교재)</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;new_clothes&#39;,this)">🛍 새상품 (의류/잡화)</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;cosmetics&#39;,this)">💄 화장품/스킨케어</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;vitamins&#39;,this)">💊 건강식품/비타민</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;electronics&#39;,this)">📱 전자제품</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;snacks&#39;,this)">🍫 식품/스낵</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;baby&#39;,this)">🍼 유아용품</button>
+          <button class="template-btn" onclick="applyTemplate(&#39;golf&#39;,this)">⛳ 골프용품</button>
         </div>
       </div>
 
@@ -551,37 +551,42 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
           <span id="listpass-auto-badge" style="display:none;font-size:10px;background:#dcfce7;color:#15803d;padding:1px 7px;border-radius:10px;font-weight:700;margin-left:6px">✦ 자동선택</span>
         </div>
         <div class="radio-group">
-          <button class="radio-btn on" id="r_list_1" onclick="pickRadio('listpass','1','r_list_1','r_list_0');clearAutoListpass()">목록통관 <span style="font-size:10px;opacity:.8">(빠름)</span></button>
-          <button class="radio-btn" id="r_list_0" onclick="pickRadio('listpass','0','r_list_0','r_list_1');clearAutoListpass()">일반통관 <span style="font-size:10px;opacity:.8">(식품 등)</span></button>
+          <button class="radio-btn on" id="r_list_1" onclick="pickRadio(&#39;listpass&#39;,&#39;1&#39;,&#39;r_list_1&#39;,&#39;r_list_0&#39;);clearAutoListpass()">목록통관 <span style="font-size:10px;opacity:.8">(의류·책 등)</span></button>
+          <button class="radio-btn" id="r_list_0" onclick="pickRadio(&#39;listpass&#39;,&#39;0&#39;,&#39;r_list_0&#39;,&#39;r_list_1&#39;);clearAutoListpass()">일반통관 <span style="font-size:10px;opacity:.8">(식품 등)</span></button>
         </div>
         <div class="field-hint" id="listpass-hint">💡 $150 이하 개인용품은 목록통관이 빠르고 간편해요 · 표준품명 선택하면 자동 설정됩니다</div>
       </div>
       <div class="field">
         <div class="field-label">전자상거래 구분 <span class="req">*</span></div>
-        <div class="radio-group">
-          <button class="radio-btn on" id="r_cc_1" onclick="pickRadio('ccgubun','1','r_cc_1','r_cc_2')">일반</button>
-          <button class="radio-btn" id="r_cc_2" onclick="pickRadio('ccgubun','2','r_cc_2','r_cc_1')">개인간 선물</button>
+        <div class="radio-group" id="ccgubun-group">
+          <button class="radio-btn" id="r_cc_1" onclick="pickRadio(&#39;ccgubun&#39;,&#39;1&#39;,&#39;r_cc_1&#39;,&#39;r_cc_2&#39;)" style="display:none">전자상거래물품</button>
+          <button class="radio-btn on" id="r_cc_2" onclick="pickRadio(&#39;ccgubun&#39;,&#39;2&#39;,&#39;r_cc_2&#39;,&#39;r_cc_1&#39;)">개인간 선물</button>
+        </div>
+        <div class="field-hint" id="ccgubun-hint">개인 고객은 개인간 선물로 자동 설정됩니다</div>
+        <div class="info-bar info-blue" id="ccgubun-notice" style="display:none;margin-top:8px;font-size:11px">
+          전자상거래 고객은 기본값이 <strong>전자상거래물품</strong>입니다.<br>
+          개인 선물로 보내실 때만 <strong>개인간 선물</strong>로 변경하세요.
         </div>
       </div>
-      <div class="field">
-        <div class="field-label">사업자통관 여부 <span class="req">*</span></div>
+      <div class="field" id="isbusi-field" style="display:none">
+        <div class="field-label">사업자통관 여부</div>
         <div class="radio-group">
-          <button class="radio-btn on" id="r_biz_n" onclick="pickRadio('isbusi','N','r_biz_n','r_biz_y')">개인통관</button>
-          <button class="radio-btn" id="r_biz_y" onclick="pickRadio('isbusi','Y','r_biz_y','r_biz_n')">사업자통관</button>
+          <button class="radio-btn on" id="r_biz_n" onclick="pickRadio(&#39;isbusi&#39;,&#39;N&#39;,&#39;r_biz_n&#39;,&#39;r_biz_y&#39;);updateCcgubun(&#39;N&#39;)">개인통관</button>
+          <button class="radio-btn" id="r_biz_y" onclick="pickRadio(&#39;isbusi&#39;,&#39;Y&#39;,&#39;r_biz_y&#39;,&#39;r_biz_n&#39;);updateCcgubun(&#39;Y&#39;)">사업자통관</button>
         </div>
       </div>
       <div class="field">
         <div class="field-label">관세 발생시 누가 내나요? <span class="req">*</span></div>
         <div class="radio-group">
-          <button class="radio-btn on" id="r_duty_r" onclick="pickRadio('dutytype','R','r_duty_r','r_duty_s')">수취인 부담 <span style="font-size:10px;opacity:.8">(한국 받는 분)</span></button>
-          <button class="radio-btn" id="r_duty_s" onclick="pickRadio('dutytype','S','r_duty_s','r_duty_r')">송화인 부담 <span style="font-size:10px;opacity:.8">(미국 보내는 분)</span></button>
+          <button class="radio-btn on" id="r_duty_r" onclick="pickRadio(&#39;dutytype&#39;,&#39;R&#39;,&#39;r_duty_r&#39;,&#39;r_duty_s&#39;)">수취인 부담 <span style="font-size:10px;opacity:.8">(한국 받는 분)</span></button>
+          <button class="radio-btn" id="r_duty_s" onclick="pickRadio(&#39;dutytype&#39;,&#39;S&#39;,&#39;r_duty_s&#39;,&#39;r_duty_r&#39;)">송화인 부담 <span style="font-size:10px;opacity:.8">(미국 보내는 분)</span></button>
         </div>
       </div>
       <div class="field">
         <div class="field-label">한미FTA 해당 여부</div>
         <div class="radio-group">
-          <button class="radio-btn on" id="r_fta_n" onclick="pickRadio('isfta','N','r_fta_n','r_fta_y')">비대상</button>
-          <button class="radio-btn" id="r_fta_y" onclick="pickRadio('isfta','Y','r_fta_y','r_fta_n')">FTA 해당</button>
+          <button class="radio-btn on" id="r_fta_n" onclick="pickRadio(&#39;isfta&#39;,&#39;N&#39;,&#39;r_fta_n&#39;,&#39;r_fta_y&#39;)">비대상</button>
+          <button class="radio-btn" id="r_fta_y" onclick="pickRadio(&#39;isfta&#39;,&#39;Y&#39;,&#39;r_fta_y&#39;,&#39;r_fta_n&#39;)">FTA 해당</button>
         </div>
       </div>
     </div>
@@ -629,7 +634,7 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
         <div class="ship-method-title">📦 물품을 창고로 어떻게 보내실 건가요?</div>
 
         <!-- 방법 1: Drop Off -->
-        <button class="ship-method-btn" onclick="toggleMethod('dropoff')">
+        <button class="ship-method-btn" onclick="toggleMethod(&#39;dropoff&#39;)">
           <span class="ship-method-icon">🏢</span>
           <div class="ship-method-text">
             <div class="main">창고 직접 Drop Off</div>
@@ -654,7 +659,7 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
         </div>
 
         <!-- 방법 2: UPS 리턴 레이블 → Pirate Ship 연동 -->
-        <button class="ship-method-btn" onclick="toggleMethod('pirate')">
+        <button class="ship-method-btn" onclick="toggleMethod(&#39;pirate&#39;)">
           <span class="ship-method-icon">🏷️</span>
           <div class="ship-method-text">
             <div class="main">UPS 리턴 레이블로 보내기</div>
@@ -673,7 +678,7 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
               <div class="step-content">
                 <div class="step-label">아래 수신 주소를 복사하세요</div>
                 <div class="copy-box">
-                  <button class="btn-copy" onclick="copyText('copy-to', this)">복사</button>
+                  <button class="btn-copy" onclick="copyText(&#39;copy-to&#39;, this)">복사</button>
                   <div class="copy-data" id="copy-to">
                     AIRWAY EXPRESS SF<br>
                     35 Ingold Rd<br>
@@ -689,7 +694,7 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
               <div class="step-content">
                 <div class="step-label">발송인 정보를 복사하세요</div>
                 <div class="copy-box">
-                  <button class="btn-copy" onclick="copyText('copy-from', this)">복사</button>
+                  <button class="btn-copy" onclick="copyText(&#39;copy-from&#39;, this)">복사</button>
                   <div class="copy-data" id="copy-from">로딩 중...</div>
                 </div>
               </div>
@@ -713,7 +718,7 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
         </div>
 
         <!-- 방법 3: Online 오더 (배송주소를 창고로) -->
-        <button class="ship-method-btn" onclick="toggleMethod('online')">
+        <button class="ship-method-btn" onclick="toggleMethod(&#39;online&#39;)">
           <span class="ship-method-icon">🛒</span>
           <div class="ship-method-text">
             <div class="main">Online 오더 배송주소로 보내기</div>
@@ -780,6 +785,9 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
 </form>
 
 <script>
+
+
+
 /* ═══════════════════════════
    표준품명 실제 DB (hyundaisf.com에서 직접 추출)
 ═══════════════════════════ */
@@ -1048,6 +1056,29 @@ function autoFillEngName(korVal) {
 /* ═══════════════════════════
    영문 강제 입력
 ═══════════════════════════ */
+// 브랜드용 - 한글만 차단, 대소문자 유지
+function engOnlyNoUpper(el, errId) {
+  const orig = el.value;
+  const pos = el.selectionStart;
+  const beforeCursor = orig.slice(0, pos);
+  const cleanBefore  = beforeCursor.replace(/[^ -]/g, '');
+  const cleanFull    = orig.replace(/[^ -]/g, '');
+  if (orig !== cleanFull) {
+    el.value = cleanFull;
+    const newPos = cleanBefore.length;
+    try { el.setSelectionRange(newPos, newPos); } catch(e) {}
+    if (errId) {
+      const errEl = document.getElementById(errId);
+      if (errEl) {
+        errEl.innerHTML = '⚠ 영문으로 입력해주세요';
+        errEl.style.display = 'block';
+        clearTimeout(errEl._t);
+        errEl._t = setTimeout(() => { errEl.style.display = 'none'; }, 2000);
+      }
+    }
+  }
+}
+
 function engOnly(el, errId) {
   const orig = el.value;
   const pos = el.selectionStart;   // 교체 전 커서 위치
@@ -1220,7 +1251,7 @@ function renderItemRows() {
         <div class="field">
           <div class="field-label">브랜드 <span class="req">*</span></div>
           <input type="text" id="brand-${rowId}" placeholder="예: Nike, Samsung, Chanel, Kirkland..."
-            value="${row.brand}" oninput="updateRow(${rowId},'brand',this.value)">
+            value="${row.brand}" oninput="engOnlyNoUpper(this,'brand-err-${rowId}');updateRow(${rowId},'brand',this.value)">
           <div class="field-error" id="brand-err-${rowId}"></div>
         </div>
         <div class="field">
@@ -1488,6 +1519,10 @@ function showStdSelected() {}
 function changeStd() {}
 function openStdForRow(id) { toggleInlineStd(id); }
 function aiMatchCategoryForRow(id) { aiMatchInline(id); }
+function calcSum() { if(itemRows.length>0) calcRowSum(itemRows[0].id); }
+
+
+
 /* ═══════════════════════════
    표준품명 → 목록통관 자동 연동
 ═══════════════════════════ */
@@ -1633,13 +1668,18 @@ function validateStep(n) {
 
     const tel = fv('send_telno');
     const telDigits = tel.replace(/\D/g,'');
-    chk('send_telno', 'send_telno_err', !tel || telDigits.length < 7,
-      !tel ? '전화번호를 입력해주세요' : '올바른 전화번호를 입력해주세요 (예: 510-600-3423)');
+    const telFail = !tel || telDigits.length !== 10 || telDigits[0] === '0' || telDigits[0] === '1';
+    chk('send_telno', 'send_telno_err', telFail,
+      !tel ? '전화번호를 입력해주세요' :
+      telDigits.length !== 10 ? '10자리 미국 전화번호를 입력해주세요 (예: 510-600-3423)' :
+      '올바른 미국 전화번호를 입력해주세요 (예: 510-600-3423)');
 
     const addr = fv('send_address');
-    chk('send_address', 'send_address_err',
-      !addr || addr.length < 5,
-      !addr ? '미국 주소를 입력해주세요' : '주소를 더 자세히 입력해주세요');
+    const addrFail = !addr || addr.length < 10 || !/[0-9]/.test(addr) || !/[a-zA-Z]{2,}/.test(addr);
+    chk('send_address', 'send_address_err', addrFail,
+      !addr ? '미국 주소를 입력해주세요' :
+      addr.length < 10 ? '주소를 더 자세히 입력해주세요' :
+      '번지수와 도로명을 포함해 입력해주세요 (예: 35 Ingold Rd, Burlingame CA 94010)');
   }
 
   if (n === 2) {
@@ -1756,6 +1796,12 @@ function goStep(n) {
 
   [1,2,3,4,5].forEach(i => {
     document.getElementById('step'+i).style.display = i===n ? 'block' : 'none';
+    // step4(통관) 진입 시 회원유형 감지해서 전자상거래 구분 자동 설정
+    if (i === 4 && i === n) {
+      const isbusiEl = document.getElementById('isbusi');
+      const curIsbusi = isbusiEl ? isbusiEl.value : 'N';
+      setTimeout(() => updateCcgubun(curIsbusi), 50);
+    }
     const si = document.getElementById('si'+i);
     const sc = document.getElementById('sc'+i);
     if (i < n)      { si.className='step-item done';   sc.textContent='✓'; }
@@ -1881,7 +1927,34 @@ function submitOrder() {
   });
 
   // 실제 폼 제출
-  document.getElementById('real-form').submit();
+  // GitHub Pages 테스트 모드 - 실제 제출 대신 확인 메시지
+  document.getElementById('overlay').classList.remove('show');
+  alert('✓ 테스트 완료!\n\n실제 서버(hyundaisf.com)에서는 이 단계에서 배송신청이 완료됩니다.');
+}
+
+/* ═══════════════════════════
+   전자상거래 구분 자동 업데이트
+═══════════════════════════ */
+function updateCcgubun(isbusiVal) {
+  const btn1    = document.getElementById('r_cc_1');   // 전자상거래물품
+  const btn2    = document.getElementById('r_cc_2');   // 개인간 선물
+  const hint    = document.getElementById('ccgubun-hint');
+  const notice  = document.getElementById('ccgubun-notice');
+
+  if (isbusiVal === 'Y') {
+    // 전자상거래(사업자) 고객: 전자상거래물품 기본 + 개인간 선물 선택 가능
+    if (btn1) btn1.style.display = '';
+    if (hint) hint.style.display = 'none';
+    if (notice) notice.style.display = '';
+    // 기본값: 전자상거래물품(1)
+    pickRadio('ccgubun','1','r_cc_1','r_cc_2');
+  } else {
+    // 개인 고객: 개인간 선물 고정
+    if (btn1) btn1.style.display = 'none';
+    if (hint) { hint.style.display = ''; hint.textContent = '개인 고객은 개인간 선물로 자동 설정됩니다'; }
+    if (notice) notice.style.display = 'none';
+    pickRadio('ccgubun','2','r_cc_2','r_cc_1');
+  }
 }
 
 /* ═══════════════════════════
@@ -2302,6 +2375,9 @@ window.addEventListener('load', () => {
 
 // 페이지 로드시 초기 상품 행 1개 생성
 addItemRow();
+
+
+
 </script>
 </body>
 </html>
