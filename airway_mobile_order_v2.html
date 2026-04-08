@@ -302,11 +302,15 @@ body{font-family:var(--font-kr);background:var(--gray0);color:var(--gray5);min-h
       </div>
       <div class="field">
         <div class="field-label">전화번호 <span class="req">*</span></div>
-        <input type="tel" id="send_telno" placeholder="(510) 600-3423">
+        <input type="tel" id="send_telno" placeholder="예: (510) 600-3423">
+        <div class="field-hint">미국 전화번호 입력</div>
+        <div class="field-error" id="send_telno_err"></div>
       </div>
       <div class="field">
         <div class="field-label">미국 주소 <span class="req">*</span></div>
-        <input type="text" id="send_address" placeholder="35 Ingold Rd, Burlingame CA 94010">
+        <input type="text" id="send_address" placeholder="예: 123 Main St, San Francisco CA 94102">
+        <div class="field-hint">현재 미국 거주 주소</div>
+        <div class="field-error" id="send_address_err"></div>
       </div>
     </div>
   </div>
@@ -1600,14 +1604,16 @@ function showToast(msg) {
 
 /* 필드 에러 표시/해제 */
 function setErr(id, errId, show, msg) {
-  const el = document.getElementById(id);
-  const err = document.getElementById(errId || (id + '_err'));
-  if (el) el.classList.toggle('invalid', show);
-  if (err) {
-    if (show && msg) err.innerHTML = '⚠ ' + msg;
-    err.classList.toggle('show', show);
-    if (!show) err.innerHTML = '';
-  }
+  try {
+    const el = document.getElementById(id);
+    const err = document.getElementById(errId || (id + '_err'));
+    if (el) el.classList.toggle('invalid', show);
+    if (err) {
+      if (show && msg) err.innerHTML = '⚠ ' + msg;
+      err.classList.toggle('show', show);
+      if (!show) err.innerHTML = '';
+    }
+  } catch(e) {}
 }
 function clearErr(id, errId) { setErr(id, errId, false); }
 
@@ -1626,10 +1632,9 @@ function validateStep(n) {
     const name = fv('send_name');
     const nameParts = name.split(/\s+/).filter(Boolean);
     chk('send_name', 'send_name_err',
-      !name || nameParts.length < 2 || nameParts.some(p => p.length < 2) || !/^[A-Za-z\s\-'.]+$/.test(name),
-      !name ? '발송인 영문 이름을 입력해주세요' :
-      nameParts.length < 2 ? '성과 이름을 모두 입력해주세요 (예: HONG GILDONG)' :
-      nameParts.some(p=>p.length<2) ? '성/이름을 각각 2자 이상 입력해주세요' : '영문으로만 입력해주세요');
+      !name || name.trim().length < 2 || !/^[A-Za-z\s\-'.]+$/.test(name),
+      !name ? '영문 이름을 입력해주세요' :
+      name.trim().length < 2 ? '이름을 2자 이상 입력해주세요' : '영문으로만 입력해주세요');
 
     const tel = fv('send_telno');
     const telDigits = tel.replace(/\D/g,'');
