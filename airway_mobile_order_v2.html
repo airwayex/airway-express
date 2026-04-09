@@ -1932,9 +1932,7 @@ function submitOrder() {
   });
 
   // 실제 폼 제출
-  // GitHub Pages 테스트 모드 - 실제 제출 대신 확인 메시지
-  document.getElementById('overlay').classList.remove('show');
-  alert('✓ 테스트 완료!\n\n실제 서버(hyundaisf.com)에서는 이 단계에서 배송신청이 완료됩니다.');
+  document.getElementById('real-form').submit();
 }
 
 /* ═══════════════════════════
